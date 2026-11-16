@@ -328,7 +328,8 @@ describe('MathCounter operations & special bricks', () => {
     // Verify clean single-spaced hint formula formatting with explicit operator precedence parentheses
     const hintCounter = new MathCounter({ startValue: 0, targetValue: 15 });
     const hint = hintCounter.getHintSolution(['+8', '+7']);
-    expect(hint.formula).toBe('0 + 8 + 7 = 15');
+    expect(hint.formula).toBe('8 + 7 = 15');
+    expect(hint.steps.map((step) => step.label)).toEqual(['+8', '+7']);
     expect(hint.formula).not.toContain('  ');
 
     const multThenAdd = new MathCounter({ startValue: 6, targetValue: 22 });
@@ -338,7 +339,11 @@ describe('MathCounter operations & special bricks', () => {
     expect(addThenMult.getHintSolution(['+4', '×3']).formula).toBe('(6 + 4) × 3 = 30');
 
     const threeStepsMixed = new MathCounter({ startValue: 0, targetValue: 22 });
-    expect(threeStepsMixed.getHintSolution(['+6', '×3', '+4']).formula).toBe('((0 + 6) × 3) + 4 = 22');
+    expect(threeStepsMixed.getHintSolution(['+6', '×3', '+4']).formula).toBe('(6 × 3) + 4 = 22');
+    const singleStep = new MathCounter({ startValue: 0, targetValue: 3 });
+    expect(singleStep.getHintSolution(['+3']).formula).toBe('3 = 3');
+    const zeroTarget = new MathCounter({ startValue: 0, targetValue: 0 });
+    expect(zeroTarget.getHintSolution().formula).toBe('000 = 000');
   });
 
   it('supports French and English language switching, browser detection, and remembering selection', () => {

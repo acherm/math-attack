@@ -10,6 +10,7 @@ import {
   getLocalizedLevelText
 } from '../i18n/i18n.js';
 import { getSkinTextureKey } from '../skins/SkinsManager.js';
+import { trackLevelEvent } from '../analytics/analytics.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -22,6 +23,7 @@ export class GameScene extends Phaser.Scene {
     this.levelConfig = getLevelConfig(this.levelNumber);
     this.levelCompleted = false;
     this.startTimeMs = 0;
+    this.victoryTimer = null;
   }
 
   create() {
@@ -43,6 +45,19 @@ export class GameScene extends Phaser.Scene {
     this._setupCollisions();
 
     this._updateAllVisuals();
+    trackLevelEvent('level_start', this);
+  }
+
+  _restartLevel() {
+    if (!this.levelCompleted) trackLevelEvent('level_restart', this);
+    this.victoryTimer?.remove(false);
+    this.scene.restart({ mode: this.gameMode, level: this.levelNumber });
+  }
+
+  _exitToMenu() {
+    if (!this.levelCompleted) trackLevelEvent('level_exit', this);
+    this.victoryTimer?.remove(false);
+    this.scene.start('MenuScene');
   }
 
   _setupMathCounters() {
@@ -684,7 +699,7 @@ export class GameScene extends Phaser.Scene {
       backgroundColor: '#1e293b',
       padding: { x: 5, y: 3 }
     }).setInteractive({ useHandCursor: true });
-    restartBtn.on('pointerdown', () => this.scene.restart({ mode: this.gameMode, level: this.levelNumber }));
+    restartBtn.on('pointerdown', () => this._restartLevel());
 
     const menuBtn = this.add.text(930, 12, '☰', {
       fontSize: '14px',
@@ -693,7 +708,7 @@ export class GameScene extends Phaser.Scene {
       backgroundColor: '#1e293b',
       padding: { x: 7, y: 3 }
     }).setInteractive({ useHandCursor: true });
-    menuBtn.on('pointerdown', () => this.scene.start('MenuScene'));
+    menuBtn.on('pointerdown', () => this._exitToMenu());
   }
 
   _triggerQuickUndo() {
@@ -741,10 +756,10 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.keys.restart.on('down', () => {
-      this.scene.restart({ mode: this.gameMode, level: this.levelNumber });
+      this._restartLevel();
     });
     this.keys.menu.on('down', () => {
-      this.scene.start('MenuScene');
+      this._exitToMenu();
     });
     this.keys.mute.on('down', () => {
       const muted = soundFX.toggleMute();
@@ -1266,6 +1281,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.levelCompleted = true;
+    trackLevelEvent('level_end', this);
     player.body.enable = false;
     player.setVelocity(0, 0);
     player.setVisible(false);
@@ -1279,7 +1295,7 @@ export class GameScene extends Phaser.Scene {
     const par = this.levelConfig.parSteps || 4;
     const stars = steps <= par ? 3 : steps <= par + 2 ? 2 : 1;
 
-    this.time.delayedCall(450, () => {
+    this.victoryTimer = this.time.delayedCall(450, () => {
       this.scene.start('VictoryScene', {
         mode: this.gameMode,
         level: this.levelNumber,

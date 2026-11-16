@@ -711,12 +711,13 @@ export class MathCounter {
     if (!steps || steps.length === 0) {
       return `${startVal} = ${targetVal}`;
     }
-    let expr = `${startVal}`;
+    const firstStep = startVal === 0 && steps[0].op === '+' ? 1 : 0;
+    let expr = `${firstStep ? steps[0].value : startVal}`;
     let prevOp = null;
 
-    for (let i = 0; i < steps.length; i++) {
+    for (let i = firstStep; i < steps.length; i++) {
       const s = steps[i];
-      if (i > 0) {
+      if (i > firstStep) {
         const isCurrentMultDiv = s.op === '×' || s.op === '÷';
         const wasPrevMultDiv = prevOp === '×' || prevOp === '÷';
         const isOpSwitch = prevOp !== null && prevOp !== s.op;

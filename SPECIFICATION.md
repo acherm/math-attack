@@ -102,12 +102,13 @@ Bumping the yellow **`? HELP / AIDE`** brick (`type: 'mystery'`) from below:
    - Otherwise computes the shortest BFS path using the stage's `bubblePool` (`1`..`10` operands), splitting a single additive/subtractive step $\ge 4$ into two smaller steps, and morphs any missing step onto existing screen bubbles (skipping `_syncBubblesForOvershootState` on that tick so the morphed hint bubbles are preserved).
 3. **Explicit Operator-Precedence Parentheses (`_formatHintFormula`)**:
    - Uses a single space around every operator and `=`.
+   - When starting at `000`, omits the redundant leading `0 +` from the displayed formula only; the first addition remains in the solution's bubble steps.
    - Whenever the operator changes or involves multiplication/division (`×` or `÷`), the preceding sub-expression is wrapped in **explicit parentheses** so order of operations is unambiguous:
-     - Pure additions: `0 + 8 + 7 = 15`
-     - Addition then subtraction: `(0 + 9 + 6) - 2 = 13`
+     - Pure additions: `8 + 7 = 15`
+     - Addition then subtraction: `(9 + 6) - 2 = 13`
      - Multiplication then addition: `(6 × 3) + 4 = 22`
      - Addition then multiplication: `(6 + 4) × 3 = 30`
-     - Three mixed steps: `((0 + 6) × 3) + 4 = 22`
+     - Three mixed steps: `(6 × 3) + 4 = 22`
 4. Displays the formula in a high-contrast banner at the top-center of the arena as well as in the top HUD bar.
 
 ---

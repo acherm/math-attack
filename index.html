@@ -36,7 +36,15 @@
     </style>
   </head>
   <body>
-    <div id="game-container"></div>
+    <div id="game-container" tabindex="-1"></div>
+    <dialog id="analytics-consent" aria-labelledby="analytics-title" aria-describedby="analytics-description">
+      <h2 id="analytics-title" data-analytics-text="analyticsTitle">For parents: optional analytics</h2>
+      <p id="analytics-description" data-analytics-text="analyticsDescription"></p>
+      <div class="analytics-actions">
+        <button id="analytics-decline" type="button" data-analytics-text="analyticsDecline">Decline</button>
+        <button id="analytics-accept" type="button" data-analytics-text="analyticsAccept">Accept analytics</button>
+      </div>
+    </dialog>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
