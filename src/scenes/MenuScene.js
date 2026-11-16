@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { LEVELS } from '../levels/levels.js';
 import { soundFX } from '../audio/SoundEffects.js';
+import { showAnalyticsSettings } from '../analytics/analytics.js';
 import {
   getLang,
   setLang,
@@ -164,17 +165,33 @@ export class MenuScene extends Phaser.Scene {
     const footerBg = this.add.graphics();
     footerBg.fillStyle(0x0f172a, 0.85);
     footerBg.lineStyle(1.5, 0x334155, 0.9);
-    footerBg.fillRoundedRect(32, 478, 760, 46, 10);
-    footerBg.strokeRoundedRect(32, 478, 760, 46, 10);
+    footerBg.fillRoundedRect(168, 478, 624, 46, 10);
+    footerBg.strokeRoundedRect(168, 478, 624, 46, 10);
 
-    this.footerTxt = this.add.text(412, 501, t('menuBricksFooter'), {
+    this.footerTxt = this.add.text(480, 501, t('menuBricksFooter'), {
       fontSize: '12px',
       fontStyle: 'bold',
       color: '#e2e8f0'
     }).setOrigin(0.5);
-    if (this.footerTxt.width > 732) {
-      this.footerTxt.setScale(732 / this.footerTxt.width);
+    if (this.footerTxt.width > 596) {
+      this.footerTxt.setScale(596 / this.footerTxt.width);
     }
+
+    const cookieBg = this.add.graphics();
+    cookieBg.fillStyle(0x0f172a, 0.92);
+    cookieBg.lineStyle(1.5, 0x64748b, 0.95);
+    cookieBg.fillRoundedRect(32, 478, 126, 46, 10);
+    cookieBg.strokeRoundedRect(32, 478, 126, 46, 10);
+    const cookieText = this.add.text(95, 501, t('analyticsSettings'), {
+      fontSize: '13px',
+      fontStyle: 'bold',
+      color: '#93c5fd'
+    }).setOrigin(0.5);
+    const cookieZone = this.add.zone(95, 501, 126, 46)
+      .setInteractive({ useHandCursor: true });
+    cookieZone.on('pointerover', () => cookieText.setColor('#fde047'));
+    cookieZone.on('pointerout', () => cookieText.setColor('#93c5fd'));
+    cookieZone.on('pointerdown', () => showAnalyticsSettings());
 
     const ghBg = this.add.graphics();
     ghBg.fillStyle(0x0f172a, 0.92);
@@ -203,6 +220,7 @@ export class MenuScene extends Phaser.Scene {
 
     // Clear any previous keyboard listeners from prior scene restarts before binding
     this.input.keyboard.removeAllListeners();
+    this.input.keyboard.on('keydown-C', () => showAnalyticsSettings());
     this.input.keyboard.once('keydown-SPACE', () => this._startGame());
     this.input.keyboard.once('keydown-ENTER', () => this._startGame());
     this.input.keyboard.on('keydown-L', () => {

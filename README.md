@@ -37,3 +37,31 @@ npm run build
 
 GitHub Pages is configured via `.github/workflows/deploy.yml` and deploys automatically on every push to `main`.
 
+## Optional analytics
+
+The game uses the website's GA4 property (`G-92TRR0HJMQ`) and consent key
+(`jdubois-analytics-consent`). Consent is shared only on the same origin; a separate
+hostname needs its own choice. No Google script or analytics requests are initiated
+before acceptance. The **Cookies** button at the bottom-left of the welcome screen
+(opposite GitHub, also available with **C**) opens bilingual, parent-facing settings for
+declining or withdrawing consent, including live changes from another tab.
+
+On the first acceptance (or an already accepted page load), GA records one
+`page_view`, plus `level_start`,
+`level_end` (successful completion), `level_restart`, and `level_exit` (explicit
+return to the menu during play, not closing the browser). Level events include only
+`app_name: math_attack`, `level_number`, `game_mode`, and `game_language`;
+`level_end` also includes `success: true`. Events before consent are discarded.
+No names, answers, equations, scores, or persistent player IDs are added by the game.
+GA itself uses cookies and collects standard browser/device information.
+Advertising signals and ad personalization are disabled; URL queries, fragments,
+and referrers are excluded from the initial page view.
+
+In GA Admin, register `app_name`, `level_number`, `game_mode`, and `game_language`
+as event-scoped custom dimensions for reports. Compare starts, completions,
+restarts, and exits by level/mode to spot difficult stages. Disable enhanced
+measurement in this shared web stream if only these explicitly documented events
+are wanted. For this child-directed game, review the property's retention and
+privacy settings and applicable parental-consent requirements before deployment;
+the parent-facing prompt does not verify parental authority.
+

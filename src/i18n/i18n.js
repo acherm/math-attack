@@ -123,6 +123,9 @@ export function getLang() {
 export function setLang(lang) {
   if (SUPPORTED_LANGS.includes(lang)) {
     currentLang = lang;
+    if (typeof document !== 'undefined') {
+      document.dispatchEvent(new Event('languagechange'));
+    }
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
         window.localStorage.setItem(STORAGE_KEY, lang);
@@ -140,6 +143,11 @@ export function toggleLang() {
 
 export const TRANSLATIONS = {
   fr: {
+    analyticsSettings: 'Cookies [C]',
+    analyticsTitle: 'Parents : statistiques facultatives',
+    analyticsDescription: "Avec votre accord, Google Analytics utilise des cookies pour mesurer les visites, les débuts et fins de niveau, les redémarrages et les retours au menu. Aucun nom ni détail des calculs n'est envoyé. Les fonctions publicitaires sont désactivées. Votre choix est partagé avec le site de Julien sur la même origine. Vous pouvez refuser ou retirer votre accord via Cookies, en bas à gauche de l'accueil. Le jeu reste identique.",
+    analyticsDecline: 'Refuser',
+    analyticsAccept: 'Accepter les statistiques',
     gameTitle: "Ben & Alice : l'Attaque des Maths",
     menuSubtitle: 'Attrape les bulles (+10, -2, ×2…) pour atteindre le nombre aléatoire de la porte !',
     langMenuLabel: 'LANGUE :',
@@ -197,6 +205,11 @@ export const TRANSLATIONS = {
     menuBtn: '☰ MENU [ESC]'
   },
   en: {
+    analyticsSettings: 'Cookies [C]',
+    analyticsTitle: 'For parents: optional analytics',
+    analyticsDescription: "With your permission, Google Analytics uses cookies to measure visits, level starts and completions, restarts, and returns to the menu. No names or calculation details are sent. Advertising features are disabled. Your choice is shared with Julien's website on the same origin. You can decline or withdraw consent via Cookies at the bottom-left of the welcome screen. The game stays the same.",
+    analyticsDecline: 'Decline',
+    analyticsAccept: 'Accept analytics',
     gameTitle: "Ben & Alice's Math Attack",
     menuSubtitle: 'Catch operation bubbles (+10, -2, ×2…) to match the random Door Number!',
     langMenuLabel: 'LANGUAGE:',
