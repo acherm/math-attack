@@ -1,0 +1,20 @@
+{
+  "name": "ben-and-alices-math-attack",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Ben & Alice's Math Attack — Fast-paced cute 1-2 player Mario-style math platformer game for kids",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "phaser": "^3.87.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0"
+  }
+}
