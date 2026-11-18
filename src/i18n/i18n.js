@@ -95,7 +95,8 @@ export function detectBrowserLang(nav = typeof navigator !== 'undefined' ? navig
 
 /**
  * Resolves the initial language: uses the saved language from storage if present,
- * otherwise falls back to the browser's default language.
+ * otherwise French (this fork is the French version: French by default, whatever the
+ * browser language; English stays available in the menu and the choice is remembered).
  */
 export function resolveInitialLang(
   storage = typeof window !== 'undefined' ? window.localStorage : null,
@@ -111,7 +112,7 @@ export function resolveInitialLang(
   } catch {
     // Ignore storage errors
   }
-  return detectBrowserLang(nav);
+  return 'fr';
 }
 
 let currentLang = resolveInitialLang();
@@ -227,7 +228,9 @@ export const TRANSLATIONS = {
     controlsScreen: "👆 Toucher l'écran",
     controlsButtons: '🎮 Manette',
     rotateHint: 'Tourne ton téléphone\npour jouer en grand !',
-    rotateDismiss: 'Jouer quand même'
+    rotateDismiss: 'Jouer quand même',
+    fullscreenBtn: '⛶ Plein écran',
+    exitFullscreenBtn: '⛶ Quitter'
   },
   en: {
     analyticsSettings: 'Cookies [C]',
@@ -312,7 +315,9 @@ export const TRANSLATIONS = {
     controlsScreen: '👆 Touch the screen',
     controlsButtons: '🎮 Gamepad',
     rotateHint: 'Turn your phone\nto play bigger!',
-    rotateDismiss: 'Play anyway'
+    rotateDismiss: 'Play anyway',
+    fullscreenBtn: '⛶ Fullscreen',
+    exitFullscreenBtn: '⛶ Exit'
   }
 };
 

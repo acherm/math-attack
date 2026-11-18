@@ -1,3 +1,19 @@
+> **🇫🇷 Version française et mobile (fork)**
+>
+> 👉 **Jouer : <https://blog.mathieuacher.com/math-attack/>** (ordinateur, tablette ou téléphone)
+>
+> Fork du jeu de Julien Dubois et de ses enfants ([jeu original](https://julien-dubois.com/math-attack/), [dépôt original](https://github.com/jdubois/math-attack)). Ce qui change :
+>
+> - **Français par défaut**, quelle que soit la langue du navigateur (l'anglais reste dans le menu), et les derniers textes restés en anglais sont traduits (« Too High! », « Slime bump! », « LOCKED »…).
+> - **Jouable sur téléphone et tablette** (code dans [`src/mobile/`](src/mobile/)) :
+>   - le jeu occupe tout l'écran ; sur téléphone la caméra suit le héros, et la loupe **🔍** zoome ;
+>   - **toucher l'écran** : touche où aller, **glisse vers le haut** pour sauter (continue = double saut), touche une plateforme plus haute pour que le héros y monte tout seul ; à 2 joueurs, chaque doigt fait bouger le héros le plus proche ;
+>   - ou une **manette à l'écran**, au choix dans le menu (une par joueur sur tablette) ;
+>   - textes adaptés au tactile, boutons plus gros, rotation de l'écran, plein écran, installable sur l'écran d'accueil.
+> - **Pas de statistiques** : pas de Google Analytics ni de fenêtre cookies (bouton « Plein écran » à la place).
+>
+> La traduction des derniers textes et la version mobile sont dans des commits séparés, indépendants du fork : ils pourraient être proposés au dépôt original.
+
 # Ben & Alice : l'Attaque des Maths / Ben & Alice's Math Attack 🎮✨
 
 A fast-paced, cute 1-to-2 player Mario-style arcade math platformer for kids, built with **Phaser 3** and **Vite**, available in **Français 🇫🇷** and **English 🇬🇧**.

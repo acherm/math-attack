@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { LEVELS } from '../levels/levels.js';
 import { soundFX } from '../audio/SoundEffects.js';
-import { showAnalyticsSettings } from '../analytics/analytics.js';
 import {
   getLang,
   setLang,
@@ -14,7 +13,14 @@ import {
   keyLabel,
   getLocalizedLevelText
 } from '../i18n/i18n.js';
-import { getControlStyle, isTouchMode, setControlStyle } from '../mobile/touch-controls.js';
+import {
+  getControlStyle,
+  isFullscreen,
+  isFullscreenAvailable,
+  isTouchMode,
+  setControlStyle,
+  toggleFullscreen
+} from '../mobile/touch-controls.js';
 import { centerSceneCamera } from '../mobile/viewport.js';
 import {
   SKINS,
@@ -186,21 +192,10 @@ export class MenuScene extends Phaser.Scene {
       this._createControlStyleToggle();
     }
 
-    const cookieBg = this.add.graphics();
-    cookieBg.fillStyle(0x0f172a, 0.92);
-    cookieBg.lineStyle(1.5, 0x64748b, 0.95);
-    cookieBg.fillRoundedRect(32, 478, 126, 46, 10);
-    cookieBg.strokeRoundedRect(32, 478, 126, 46, 10);
-    const cookieText = this.add.text(95, 501, t('analyticsSettings'), {
-      fontSize: '13px',
-      fontStyle: 'bold',
-      color: '#93c5fd'
-    }).setOrigin(0.5);
-    const cookieZone = this.add.zone(95, 501, 126, 46)
-      .setInteractive({ useHandCursor: true });
-    cookieZone.on('pointerover', () => cookieText.setColor('#fde047'));
-    cookieZone.on('pointerout', () => cookieText.setColor('#93c5fd'));
-    cookieZone.on('pointerdown', () => showAnalyticsSettings());
+    // Fork: no analytics (so no Cookies button); a Fullscreen button instead (when available)
+    if (isFullscreenAvailable()) {
+      this._createFullscreenButton();
+    }
 
     const ghBg = this.add.graphics();
     ghBg.fillStyle(0x0f172a, 0.92);
@@ -229,7 +224,6 @@ export class MenuScene extends Phaser.Scene {
 
     // Clear any previous keyboard listeners from prior scene restarts before binding
     this.input.keyboard.removeAllListeners();
-    this.input.keyboard.on('keydown-C', () => showAnalyticsSettings());
     this.input.keyboard.once('keydown-SPACE', () => this._startGame());
     this.input.keyboard.once('keydown-ENTER', () => this._startGame());
     this.input.keyboard.on('keydown-L', () => {
@@ -257,6 +251,36 @@ export class MenuScene extends Phaser.Scene {
         this.musicTxt.setColor(muted ? '#fda4af' : '#4ade80');
       }
     });
+  }
+
+  _createFullscreenButton() {
+    const fsBg = this.add.graphics();
+    fsBg.fillStyle(0x0f172a, 0.92);
+    fsBg.lineStyle(1.5, 0x64748b, 0.95);
+    fsBg.fillRoundedRect(32, 478, 126, 46, 10);
+    fsBg.strokeRoundedRect(32, 478, 126, 46, 10);
+    const fsTxt = this.add.text(95, 501, '', {
+      fontSize: '13px',
+      fontStyle: 'bold',
+      color: '#93c5fd'
+    }).setOrigin(0.5);
+    const refresh = () => {
+      fsTxt.setScale(1);
+      fsTxt.setText(t(isFullscreen() ? 'exitFullscreenBtn' : 'fullscreenBtn'));
+      if (fsTxt.width > 116) fsTxt.setScale(116 / fsTxt.width);
+    };
+    refresh();
+    document.addEventListener('fullscreenchange', refresh);
+    document.addEventListener('webkitfullscreenchange', refresh);
+    this.events.once('shutdown', () => {
+      document.removeEventListener('fullscreenchange', refresh);
+      document.removeEventListener('webkitfullscreenchange', refresh);
+    });
+    const fsZone = this.add.zone(95, 501, 126, 46).setInteractive({ useHandCursor: true });
+    fsZone.on('pointerover', () => fsTxt.setColor('#fde047'));
+    fsZone.on('pointerout', () => fsTxt.setColor('#93c5fd'));
+    // pointerup = a real "user gesture" for the Fullscreen API on mobile browsers
+    fsZone.on('pointerup', () => toggleFullscreen());
   }
 
   // Touch screens: choose between touching the screen and the on-screen gamepad.

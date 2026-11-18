@@ -3,7 +3,6 @@ import { BootScene } from './scenes/BootScene.js';
 import { MenuScene } from './scenes/MenuScene.js';
 import { GameScene } from './scenes/GameScene.js';
 import { VictoryScene } from './scenes/VictoryScene.js';
-import { initAnalytics } from './analytics/analytics.js';
 import { initMobile, isTouchMode } from './mobile/touch-controls.js';
 import { setupMobileGame } from './mobile/viewport.js';
 
@@ -39,5 +38,6 @@ export const game = new Phaser.Game(config);
 if (typeof window !== 'undefined') {
   window.__GAME__ = game;
   setupMobileGame(game);
-  initAnalytics();
+  // Fork: no analytics. The original sends level events to the author's Google Analytics
+  // (with a consent dialog); this copy tracks nothing (trackLevelEvent() stays a no-op).
 }
