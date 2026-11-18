@@ -22,6 +22,7 @@ import {
   toggleFullscreen
 } from '../mobile/touch-controls.js';
 import { centerSceneCamera } from '../mobile/viewport.js';
+import { getInstallMode, installApp, isLaunchedAsApp, onInstallModeChange } from '../pwa/install.js';
 import {
   SKINS,
   getUnlockedSkins,
@@ -192,10 +193,8 @@ export class MenuScene extends Phaser.Scene {
       this._createControlStyleToggle();
     }
 
-    // Fork: no analytics (so no Cookies button); a Fullscreen button instead (when available)
-    if (isFullscreenAvailable()) {
-      this._createFullscreenButton();
-    }
+    // Fork: no analytics (so no Cookies button); an Install / Fullscreen button instead
+    this._createAppButton();
 
     const ghBg = this.add.graphics();
     ghBg.fillStyle(0x0f172a, 0.92);
@@ -253,34 +252,53 @@ export class MenuScene extends Phaser.Scene {
     });
   }
 
-  _createFullscreenButton() {
-    const fsBg = this.add.graphics();
-    fsBg.fillStyle(0x0f172a, 0.92);
-    fsBg.lineStyle(1.5, 0x64748b, 0.95);
-    fsBg.fillRoundedRect(32, 478, 126, 46, 10);
-    fsBg.strokeRoundedRect(32, 478, 126, 46, 10);
-    const fsTxt = this.add.text(95, 501, '', {
+  // Bottom-left button: "Install" on phones & tablets when the game can be installed (it then
+  // opens fullscreen in landscape), otherwise "Fullscreen" (hidden in the installed app).
+  _createAppButton() {
+    const bg = this.add.graphics();
+    bg.fillStyle(0x0f172a, 0.92);
+    bg.lineStyle(1.5, 0x64748b, 0.95);
+    bg.fillRoundedRect(32, 478, 126, 46, 10);
+    bg.strokeRoundedRect(32, 478, 126, 46, 10);
+    const txt = this.add.text(95, 501, '', {
       fontSize: '13px',
       fontStyle: 'bold',
       color: '#93c5fd'
     }).setOrigin(0.5);
+    const zone = this.add.zone(95, 501, 126, 46).setInteractive({ useHandCursor: true });
+
+    const action = () => {
+      if (isTouchMode() && getInstallMode()) return 'install';
+      if (isFullscreenAvailable() && !isLaunchedAsApp()) return 'fullscreen';
+      return null;
+    };
     const refresh = () => {
-      fsTxt.setScale(1);
-      fsTxt.setText(t(isFullscreen() ? 'exitFullscreenBtn' : 'fullscreenBtn'));
-      if (fsTxt.width > 116) fsTxt.setScale(116 / fsTxt.width);
+      const current = action();
+      [bg, txt].forEach((obj) => obj.setVisible(!!current));
+      zone.input.enabled = !!current;
+      if (!current) return;
+      txt.setScale(1);
+      txt.setText(t(current === 'install' ? 'installBtn' : isFullscreen() ? 'exitFullscreenBtn' : 'fullscreenBtn'));
+      if (txt.width > 116) txt.setScale(116 / txt.width);
     };
     refresh();
+    const unsubscribe = onInstallModeChange(refresh);
     document.addEventListener('fullscreenchange', refresh);
     document.addEventListener('webkitfullscreenchange', refresh);
     this.events.once('shutdown', () => {
+      unsubscribe();
       document.removeEventListener('fullscreenchange', refresh);
       document.removeEventListener('webkitfullscreenchange', refresh);
     });
-    const fsZone = this.add.zone(95, 501, 126, 46).setInteractive({ useHandCursor: true });
-    fsZone.on('pointerover', () => fsTxt.setColor('#fde047'));
-    fsZone.on('pointerout', () => fsTxt.setColor('#93c5fd'));
-    // pointerup = a real "user gesture" for the Fullscreen API on mobile browsers
-    fsZone.on('pointerup', () => toggleFullscreen());
+
+    zone.on('pointerover', () => txt.setColor('#fde047'));
+    zone.on('pointerout', () => txt.setColor('#93c5fd'));
+    // pointerup = a real "user gesture" for the install prompt and the Fullscreen API
+    zone.on('pointerup', () => {
+      const current = action();
+      if (current === 'install') installApp();
+      else if (current === 'fullscreen') toggleFullscreen();
+    });
   }
 
   // Touch screens: choose between touching the screen and the on-screen gamepad.

@@ -34,6 +34,7 @@ npm run build      # Build production static bundle into dist/
   - `VictoryScene.js` — Star rating, equation step recap, skin unlock celebration, and 10 random victory dances (`[D]`).
 - `test/MathEngine.test.js` — Automated tests for math rules, i18n, skin unlocking, and strict level-design geometry invariants.
 - `src/mobile/` — Phones & tablets: `touch-controls.js` (touch detection, control style & zoom preferences, on-screen gamepad, fullscreen, rotate hint), `GameSceneTouch.js` (mixed into `GameScene`: world + HUD cameras, 🔍 zoom, touch HUD layout, "touch the screen" controls with swipe-up jump and platform climbing), `viewport.js` (`Phaser.Scale.EXPAND` helpers and a Phaser 3.90 rotation workaround).
+- `src/pwa/` — Installable app: `install.js` (service worker registration, install prompt / iOS "Add to Home Screen" instructions), `sw.js` (service worker template: precache for offline play, network-first page), `vite-plugin-sw.js` (writes `dist/sw.js` with the built file list and a content-hash version). Manifest and icons (incl. maskable) in `public/`.
 - `test/touch-texts.test.js` — Touch-screen text variants (`<key>Touch`, `<key>Screen`), hidden keyboard shortcuts, and fr/en key parity.
 
 ## 4. Calculation Engine & Level Design Specification

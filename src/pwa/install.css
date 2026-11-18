@@ -1,0 +1,52 @@
+/* "Add to Home Screen" instructions (iPhone / iPad) */
+
+#install-hint {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: max(20px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  text-align: center;
+  background: rgba(15, 23, 42, 0.96);
+}
+
+#install-hint[hidden] {
+  display: none;
+}
+
+#install-hint .install-icon {
+  font-size: 56px;
+}
+
+#install-hint p {
+  max-width: 34em;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #f8fafc;
+  white-space: pre-line;
+}
+
+#install-hint button {
+  min-width: 120px;
+  min-height: 48px;
+  padding: 10px 24px;
+  border: 2px solid #fde047;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #052e16;
+  background: #22c55e;
+  cursor: pointer;
+}
+
+#install-hint button:focus-visible {
+  outline: 3px solid #fde047;
+  outline-offset: 3px;
+}

@@ -1,15 +1,24 @@
 {
+  "id": "./",
   "name": "Ben & Alice : l'Attaque des Maths",
   "short_name": "Math Attack",
-  "description": "Ben & Alice's Math Attack — a math platformer game for kids.",
+  "description": "Un jeu de plateforme pour apprendre le calcul en s'amusant (7-10 ans) : attrape les bulles +10, -2, ×2… pour atteindre le nombre de la porte. Jouable au doigt, à 1 ou 2 joueurs.",
+  "lang": "fr",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
   "orientation": "landscape",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
+  "categories": ["games", "education", "kids"],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "screenshots/game.jpg", "sizes": "1688x780", "type": "image/jpeg", "label": "Attrape les bulles pour atteindre le nombre de la porte" },
+    { "src": "screenshots/menu.jpg", "sizes": "1688x780", "type": "image/jpeg", "label": "1 ou 2 joueurs, 8 niveaux, 20 skins à débloquer" }
   ]
 }

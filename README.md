@@ -9,7 +9,8 @@
 >   - le jeu occupe tout l'écran ; sur téléphone la caméra suit le héros, et la loupe **🔍** zoome ;
 >   - **toucher l'écran** : touche où aller, **glisse vers le haut** pour sauter (continue = double saut), touche une plateforme plus haute pour que le héros y monte tout seul ; à 2 joueurs, chaque doigt fait bouger le héros le plus proche ;
 >   - ou une **manette à l'écran**, au choix dans le menu (une par joueur sur tablette) ;
->   - textes adaptés au tactile, boutons plus gros, rotation de l'écran, plein écran, installable sur l'écran d'accueil.
+>   - textes adaptés au tactile, boutons plus gros, rotation de l'écran, plein écran.
+> - **Installable comme une appli** (code dans [`src/pwa/`](src/pwa/)) : bouton **📲 Installer** dans le menu (Android : fenêtre d'installation du navigateur ; iPhone/iPad : « Partager » puis « Sur l'écran d'accueil », expliqué à l'écran). L'appli s'ouvre **en plein écran et en paysage**, et le jeu marche **hors connexion**.
 > - **Pas de statistiques** : pas de Google Analytics ni de fenêtre cookies (bouton « Plein écran » à la place).
 >
 > La traduction des derniers textes et la version mobile sont dans des commits séparés, indépendants du fork : ils pourraient être proposés au dépôt original.
@@ -39,7 +40,7 @@ A fast-paced, cute 1-to-2 player Mario-style arcade math platformer for kids, bu
 - The game fills the whole screen; on a phone the camera follows the heroes, and the **🔍** button zooms in.
 - **Touch the screen** (default): tap where the hero should go, **swipe up** to jump (keep sliding for a double jump), tap a higher platform to climb onto it. In 2-player modes, each finger moves the hero closest to it.
 - Or choose the **on-screen gamepad** in the menu (◀ ▶ pad + jump button; one per player on a tablet).
-- Can be added to the home screen to play fullscreen in landscape.
+- **Installable app**: the menu's **📲 Install** button (Android/Chrome install prompt, or "Add to Home Screen" instructions on iPhone/iPad). The app opens fullscreen in landscape and works offline (service worker generated at build time, see `src/pwa/`).
 
 ## Quick Start
 

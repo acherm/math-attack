@@ -230,7 +230,11 @@ export const TRANSLATIONS = {
     rotateHint: 'Tourne ton téléphone\npour jouer en grand !',
     rotateDismiss: 'Jouer quand même',
     fullscreenBtn: '⛶ Plein écran',
-    exitFullscreenBtn: '⛶ Quitter'
+    exitFullscreenBtn: '⛶ Quitter',
+    installBtn: '📲 Installer',
+    installHintIos:
+      "Installe le jeu sur ton écran d'accueil :\n1. Touche le bouton Partager ⬆️ (ou le menu ··· puis Partager)\n2. Choisis « Sur l'écran d'accueil » ➕\nLe jeu s'ouvrira en plein écran, comme une appli !",
+    installHintOk: "D'accord !"
   },
   en: {
     analyticsSettings: 'Cookies [C]',
@@ -317,7 +321,11 @@ export const TRANSLATIONS = {
     rotateHint: 'Turn your phone\nto play bigger!',
     rotateDismiss: 'Play anyway',
     fullscreenBtn: '⛶ Fullscreen',
-    exitFullscreenBtn: '⛶ Exit'
+    exitFullscreenBtn: '⛶ Exit',
+    installBtn: '📲 Install',
+    installHintIos:
+      'Install the game on your home screen:\n1. Tap the Share button ⬆️ (or the ··· menu, then Share)\n2. Choose “Add to Home Screen” ➕\nThe game will open fullscreen, like an app!',
+    installHintOk: 'Got it!'
   }
 };
 

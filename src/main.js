@@ -5,8 +5,10 @@ import { GameScene } from './scenes/GameScene.js';
 import { VictoryScene } from './scenes/VictoryScene.js';
 import { initMobile, isTouchMode } from './mobile/touch-controls.js';
 import { setupMobileGame } from './mobile/viewport.js';
+import { initPwa } from './pwa/install.js';
 
 initMobile();
+initPwa();
 
 const config = {
   type: Phaser.AUTO,
