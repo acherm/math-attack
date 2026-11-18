@@ -7,10 +7,13 @@ import {
   toggleLang,
   getActivePlayersInfo,
   t,
+  keyLabel,
   getLocalizedLevelText
 } from '../i18n/i18n.js';
 import { getSkinTextureKey } from '../skins/SkinsManager.js';
 import { trackLevelEvent } from '../analytics/analytics.js';
+import { consumeTouchJump, touchState } from '../mobile/touch-controls.js';
+import { GameSceneTouch } from '../mobile/GameSceneTouch.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -40,11 +43,14 @@ export class GameScene extends Phaser.Scene {
     this._createSlimes();
     this._createTraps();
     this._createPlayers();
-    this._createHud();
+    this._initUiLayer(); // phones & tablets: see src/mobile/GameSceneTouch.js
+    this._withUi(() => this._createHud());
     this._setupControls();
     this._setupCollisions();
+    this._setupTouchPlay();
 
     this._updateAllVisuals();
+    this.hudEquationText.setText(this.hudEquationText.text); // re-fit next to the counter
     trackLevelEvent('level_start', this);
   }
 
@@ -624,7 +630,7 @@ export class GameScene extends Phaser.Scene {
 
   _createHud() {
     // Top translucent bar
-    const topBar = this.add.graphics();
+    const topBar = (this.hudBar = this.add.graphics());
     topBar.fillStyle(0x0f172a, 0.82);
     topBar.fillRect(0, 0, 960, 44);
 
@@ -653,13 +659,13 @@ export class GameScene extends Phaser.Scene {
       color: '#bae6fd'
     }).setOrigin(1, 0);
 
-    const undoBtn = this.add.text(720, 12, '⏪ [U]', {
+    const undoBtn = (this.hudUndoBtn = this.add.text(720, 12, keyLabel('⏪ [U]'), {
       fontSize: '12.5px',
       fontStyle: 'bold',
       color: '#e2e8f0',
       backgroundColor: '#1e293b',
       padding: { x: 5, y: 3 }
-    }).setInteractive({ useHandCursor: true });
+    }).setInteractive({ useHandCursor: true }));
     undoBtn.on('pointerdown', () => this._triggerQuickUndo());
 
     this.hudMuteBtn = this.add.text(775, 12, soundFX.muted ? '🔇' : '🎵', {
@@ -673,16 +679,16 @@ export class GameScene extends Phaser.Scene {
       const muted = soundFX.toggleMute();
       this.hudMuteBtn.setText(muted ? '🔇' : '🎵');
       this.hudMuteBtn.setColor(muted ? '#fda4af' : '#4ade80');
-      this._spawnFloatingText(480, 80, muted ? t('audioMutedToast') : t('audioOnToast'), '#fde047');
+      this._spawnUiFloatingText(480, 80, muted ? t('audioMutedToast') : t('audioOnToast'), '#fde047');
     });
 
-    const langBtn = this.add.text(814, 12, getLang() === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN', {
+    const langBtn = (this.hudLangBtn = this.add.text(814, 12, getLang() === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN', {
       fontSize: '12.5px',
       fontStyle: 'bold',
       color: '#93c5fd',
       backgroundColor: '#1e293b',
       padding: { x: 5, y: 3 }
-    }).setInteractive({ useHandCursor: true });
+    }).setInteractive({ useHandCursor: true }));
     langBtn.on('pointerdown', () => {
       soundFX.playOperatorSwitch();
       toggleLang();
@@ -692,30 +698,32 @@ export class GameScene extends Phaser.Scene {
       this._updateAllVisuals();
     });
 
-    const restartBtn = this.add.text(874, 12, '↻ [R]', {
+    const restartBtn = (this.hudRestartBtn = this.add.text(874, 12, keyLabel('↻ [R]'), {
       fontSize: '13px',
       fontStyle: 'bold',
       color: '#fde047',
       backgroundColor: '#1e293b',
       padding: { x: 5, y: 3 }
-    }).setInteractive({ useHandCursor: true });
+    }).setInteractive({ useHandCursor: true }));
     restartBtn.on('pointerdown', () => this._restartLevel());
 
-    const menuBtn = this.add.text(930, 12, '☰', {
+    const menuBtn = (this.hudMenuBtn = this.add.text(930, 12, '☰', {
       fontSize: '14px',
       fontStyle: 'bold',
       color: '#ffffff',
       backgroundColor: '#1e293b',
       padding: { x: 7, y: 3 }
-    }).setInteractive({ useHandCursor: true });
+    }).setInteractive({ useHandCursor: true }));
     menuBtn.on('pointerdown', () => this._exitToMenu());
+
+    this._finishTouchHud();
   }
 
   _triggerQuickUndo() {
     const res = this.counterP1.applyBrick('undo');
     if (res.accepted) {
       soundFX.playBrickBump();
-      this._spawnFloatingText(480, 90, res.shortLabel, '#4ade80');
+      this._spawnUiFloatingText(480, 90, res.shortLabel, '#4ade80');
       this._updateAllVisuals();
     } else {
       soundFX.playReject();
@@ -767,7 +775,7 @@ export class GameScene extends Phaser.Scene {
         this.hudMuteBtn.setText(muted ? '🔇' : '🎵');
         this.hudMuteBtn.setColor(muted ? '#fda4af' : '#4ade80');
       }
-      this._spawnFloatingText(480, 80, muted ? t('audioMutedToast') : t('audioOnToast'), '#fde047');
+      this._spawnUiFloatingText(480, 80, muted ? t('audioMutedToast') : t('audioOnToast'), '#fde047');
     });
     this.keys.lang.on('down', () => {
       soundFX.playOperatorSwitch();
@@ -874,7 +882,7 @@ export class GameScene extends Phaser.Scene {
 
       // Highlight the solution banner in a big, clear card at the top-center of the arena AND in the HUD!
       const titleStr = t('suggestedSolution');
-      this._spawnHintBanner(titleStr, hint.formula);
+      this._withUi(() => this._spawnHintBanner(titleStr, hint.formula));
       this.hudEquationText.setText(`💡 ${hint.formula}`);
       this._burstParticles(bData.baseX, bData.baseY - 16, 0xfde047, 14);
       this._updateAllVisuals(true);
@@ -1504,19 +1512,25 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time) {
+    this._updateFollowTarget();
     if (this.levelCompleted) return;
 
+    // On-screen gamepad (touch screens): consume taps every frame
+    const p1TouchJump = consumeTouchJump('p1');
+    const p2TouchJump = consumeTouchJump('p2');
+
     // Read JustDown states ONCE per frame BEFORE iterating over players so Player 1 never consumes Player 2's jump!
-    const p1JumpTriggered = Phaser.Input.Keyboard.JustDown(this.keys.p1Jump);
+    const p1JumpTriggered = Phaser.Input.Keyboard.JustDown(this.keys.p1Jump) || p1TouchJump;
     const p1SpaceTriggered = Phaser.Input.Keyboard.JustDown(this.keys.p1JumpAlt);
     const p2JumpTriggered =
       this.p2JumpQueued ||
       Phaser.Input.Keyboard.JustDown(this.keys.p2JumpZ) ||
-      Phaser.Input.Keyboard.JustDown(this.keys.p2JumpW);
+      Phaser.Input.Keyboard.JustDown(this.keys.p2JumpW) ||
+      p2TouchJump;
     this.p2JumpQueued = false;
 
-    const p2LeftDown = this.keys.p2LeftQ.isDown || this.keys.p2LeftA.isDown;
-    const p2RightDown = this.keys.p2Right.isDown;
+    const p2LeftDown = this.keys.p2LeftQ.isDown || this.keys.p2LeftA.isDown || touchState.p2.left;
+    const p2RightDown = this.keys.p2Right.isDown || touchState.p2.right;
 
     // Update players movement & jumping
     this.players.forEach((player) => {
@@ -1534,8 +1548,8 @@ export class GameScene extends Phaser.Scene {
       let jumpJustPressed = false;
 
       if (pData.id === 1) {
-        moveLeft = this.keys.p1Left.isDown || (this.gameMode === '1p' && p2LeftDown);
-        moveRight = this.keys.p1Right.isDown || (this.gameMode === '1p' && p2RightDown);
+        moveLeft = this.keys.p1Left.isDown || touchState.p1.left || (this.gameMode === '1p' && p2LeftDown);
+        moveRight = this.keys.p1Right.isDown || touchState.p1.right || (this.gameMode === '1p' && p2RightDown);
         jumpJustPressed =
           p1JumpTriggered ||
           (this.gameMode === '1p' && (p1SpaceTriggered || p2JumpTriggered));
@@ -1543,6 +1557,14 @@ export class GameScene extends Phaser.Scene {
         moveLeft = p2LeftDown;
         moveRight = p2RightDown;
         jumpJustPressed = p2JumpTriggered;
+      }
+
+      // "Touch the screen" controls (see src/mobile/GameSceneTouch.js)
+      const touchMove = this._touchMove(player, time);
+      if (touchMove) {
+        moveLeft = moveLeft || touchMove.left;
+        moveRight = moveRight || touchMove.right;
+        jumpJustPressed = jumpJustPressed || touchMove.jump;
       }
 
       const speed = 250;
@@ -1646,3 +1668,6 @@ export class GameScene extends Phaser.Scene {
     }
   }
 }
+
+// Phones & tablets: cameras, zoom, touch HUD and touch controls
+Object.assign(GameScene.prototype, GameSceneTouch);

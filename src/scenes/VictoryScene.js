@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import { formatThreeDigits } from '../math/MathEngine.js';
 import { soundFX } from '../audio/SoundEffects.js';
 import { getLang, t } from '../i18n/i18n.js';
+import { isTouchMode } from '../mobile/touch-controls.js';
+import { centerSceneCamera } from '../mobile/viewport.js';
 import {
   unlockNextSkinOnVictory,
   getSkinTextureKey,
@@ -92,9 +94,10 @@ export class VictoryScene extends Phaser.Scene {
 
   create() {
     soundFX.startMusic('victory');
+    centerSceneCamera(this);
     const bg = this.add.graphics();
     bg.fillGradientStyle(0x0f172a, 0x0f172a, 0x1e1b4b, 0x1e1b4b, 1);
-    bg.fillRect(0, 0, 960, 540);
+    bg.fillRect(-1200, 0, 3360, 540); // wider than 960 for wide screens (centerSceneCamera)
 
     // Center Card Panel (leaves stage room on left & right for Ben and Alice to dance!)
     const card = this.add.graphics();
@@ -531,11 +534,14 @@ export class VictoryScene extends Phaser.Scene {
     g.fillRoundedRect(x - w / 2, y - h / 2, w, h, 12);
     g.strokeRoundedRect(x - w / 2, y - h / 2, w, h, 12);
 
-    this.add.text(x, y, label, {
-      fontSize: '13px',
+    const labelTxt = this.add.text(x, y, label, {
+      fontSize: isTouchMode() ? '16px' : '13px',
       fontStyle: 'bold',
       color: '#ffffff'
     }).setOrigin(0.5);
+    if (labelTxt.width > w - 12) {
+      labelTxt.setScale((w - 12) / labelTxt.width);
+    }
 
     const zone = this.add.zone(x, y, w, h).setInteractive({ useHandCursor: true });
     zone.on('pointerdown', onClick);

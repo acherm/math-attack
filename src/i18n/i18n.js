@@ -209,7 +209,25 @@ export const TRANSLATIONS = {
     closeBtn: '✕ FERMER',
     suggestedSolution: '💡 SOLUTION PROPOSÉE :',
     slimeShortLabel: '-{n} Aïe !',
-    slimeBumpExpr: 'Aïe, un monstre ! {prev} - {n} = {val}'
+    slimeBumpExpr: 'Aïe, un monstre ! {prev} - {n} = {val}',
+    // Touch screens: '<key>Touch' replaces '<key>', and '<key>Screen' too with the
+    // "touch the screen" controls (see src/mobile/touch-controls.js)
+    mode1pSubTouch: 'Boutons ◀ ▶ et ⤒ (Double Saut !)',
+    modeCoopSubTouch: 'Tablette : {p2} à gauche • {p1} à droite',
+    modeVersusSubTouch: 'Tablette : {p2} à gauche • {p1} à droite',
+    menuBricksFooterTouch: '🚀 Touche ⤒ 2× = Double Saut  •  Bloc [? AIDE] = Solution',
+    hudHintTouch: '🚀 Touche ⤒ 2× : Double Saut !',
+    skinsGalleryTitleTouch: '👕 GALERIE DES 20 SKINS (BEN & ALICE) — Touche un skin pour le choisir !',
+    mode1pSubScreen: 'Touche où aller • glisse vers le haut = saut',
+    modeCoopSubScreen: 'Le perso le plus proche du doigt bouge',
+    modeVersusSubScreen: 'Le perso le plus proche du doigt bouge',
+    hudHintScreen: '👆 Touche où aller • glisse ↑ = saut',
+    jumpBtn: 'SAUT',
+    controlsLabel: 'CONTRÔLES :',
+    controlsScreen: "👆 Toucher l'écran",
+    controlsButtons: '🎮 Manette',
+    rotateHint: 'Tourne ton téléphone\npour jouer en grand !',
+    rotateDismiss: 'Jouer quand même'
   },
   en: {
     analyticsSettings: 'Cookies [C]',
@@ -278,7 +296,23 @@ export const TRANSLATIONS = {
     closeBtn: '✕ CLOSE',
     suggestedSolution: '💡 SUGGESTED SOLUTION:',
     slimeShortLabel: '-{n} Slime!',
-    slimeBumpExpr: 'Slime bump! {prev} - {n} = {val}'
+    slimeBumpExpr: 'Slime bump! {prev} - {n} = {val}',
+    mode1pSubTouch: '◀ ▶ pad + ⤒ button (Double Jump!)',
+    modeCoopSubTouch: 'Tablet: {p2} on the left • {p1} on the right',
+    modeVersusSubTouch: 'Tablet: {p2} on the left • {p1} on the right',
+    menuBricksFooterTouch: '🚀 Tap ⤒ twice = Double Jump  •  [? HELP] Block = Solution',
+    hudHintTouch: '🚀 Tap ⤒ twice: Double Jump!',
+    skinsGalleryTitleTouch: '👕 ALL 20 SKINS GALLERY (BEN & ALICE) — Tap any skin to equip!',
+    mode1pSubScreen: 'Tap where to go • swipe up = jump',
+    modeCoopSubScreen: 'The hero nearest your finger moves',
+    modeVersusSubScreen: 'The hero nearest your finger moves',
+    hudHintScreen: '👆 Tap where to go • swipe ↑ = jump',
+    jumpBtn: 'JUMP',
+    controlsLabel: 'CONTROLS:',
+    controlsScreen: '👆 Touch the screen',
+    controlsButtons: '🎮 Gamepad',
+    rotateHint: 'Turn your phone\nto play bigger!',
+    rotateDismiss: 'Play anyway'
   }
 };
 
@@ -369,13 +403,35 @@ export const LEVEL_TRANSLATIONS = {
   }
 };
 
+// Touch screens (see src/mobile/touch-controls.js): texts may have touch variants, tried
+// in order (e.g. ['Screen', 'Touch'] looks up 'hudHintScreen', then 'hudHintTouch', then
+// 'hudHint'), and keyboard shortcuts such as "[K]" or "[ESC]" are hidden.
+let textVariants = [];
+
+export function setTextVariants(suffixes = []) {
+  textVariants = suffixes;
+}
+
+/** Removes keyboard shortcuts ("[K]", "[ESC]", "(ESPACE / ENTRÉE)"…) but keeps "[? AIDE]". */
+export function hideKeyHints(str) {
+  return str
+    .replace(/\s*\((?:ESPACE|SPACE) \/ (?:ENTRÉE|ENTER)\)/g, '')
+    .replace(/\s*\[(?:[A-Z]|ESC|ESPACE|SPACE|ENTRÉE|ENTER)\]/g, '');
+}
+
+/** A label with keyboard shortcuts (e.g. '⏪ [U]'), shown without them on touch screens. */
+export function keyLabel(str) {
+  return textVariants.length ? hideKeyHints(str) : str;
+}
+
 export function t(key, params = {}) {
   const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.fr;
-  let str = dict[key] ?? TRANSLATIONS.en[key] ?? key;
+  const lookup = (k) => dict[k] ?? TRANSLATIONS.en[k];
+  let str = textVariants.map((suffix) => lookup(key + suffix)).find((v) => v != null) ?? lookup(key) ?? key;
   for (const [k, v] of Object.entries(params)) {
     str = str.replaceAll(`{${k}}`, String(v));
   }
-  return str;
+  return keyLabel(str);
 }
 
 export function getLocalizedLevelText(levelId, targetValue) {

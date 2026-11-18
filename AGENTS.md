@@ -33,6 +33,8 @@ npm run build      # Build production static bundle into dist/
   - `GameScene.js` — Platformer gameplay, brick bumping, bubble collection/morphing, monster/trap collisions, crying swollen-head effect, and 2P Co-op door logic.
   - `VictoryScene.js` — Star rating, equation step recap, skin unlock celebration, and 10 random victory dances (`[D]`).
 - `test/MathEngine.test.js` — Automated tests for math rules, i18n, skin unlocking, and strict level-design geometry invariants.
+- `src/mobile/` — Phones & tablets: `touch-controls.js` (touch detection, control style & zoom preferences, on-screen gamepad, fullscreen, rotate hint), `GameSceneTouch.js` (mixed into `GameScene`: world + HUD cameras, 🔍 zoom, touch HUD layout, "touch the screen" controls with swipe-up jump and platform climbing), `viewport.js` (`Phaser.Scale.EXPAND` helpers and a Phaser 3.90 rotation workaround).
+- `test/touch-texts.test.js` — Touch-screen text variants (`<key>Touch`, `<key>Screen`), hidden keyboard shortcuts, and fr/en key parity.
 
 ## 4. Calculation Engine & Level Design Specification
 
@@ -60,4 +62,5 @@ Key invariants enforced by `npm test` (`test/MathEngine.test.js`):
 3. **Controls & Localization**:
    - **Player 1**: Arrow keys (`←`, `→`, `↑` to jump; `Space` also jumps **only** in `1p` mode). Supports Double Jump.
    - **Player 2**: Simultaneous AZERTY (`Q`, `D`, `Z`) and QWERTY/QWERTZ (`A`, `D`, `W`) support. Evaluate `JustDown` once per frame before the player loop so P1 never consumes P2's jump input.
+   - **Touch screens** (`src/mobile/`): the canvas fills the screen (`EXPAND`); HUD objects must be created inside `_withUi()` (they are only rendered by the fixed UI camera). Touch-only texts use `<key>Touch` / `<key>Screen` variants in `i18n.js`, and keyboard shortcuts (`[K]`, `[ESC]`…) are hidden on touch screens (`keyLabel()` for hard-coded labels).
    - **Bilingual UI**: All new UI strings and brick captions (`AIDE`/`HELP`, `RETOUR`/`UNDO`, `ZÉRO`/`000`) must support both `fr` and `en` in `src/i18n/i18n.js` and fit within their card bounds without overflowing.

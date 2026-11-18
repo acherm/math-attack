@@ -126,6 +126,7 @@ class SoundManager {
     if (typeof window !== 'undefined') {
       window.addEventListener('pointerdown', this._onUnlock, { passive: true });
       window.addEventListener('keydown', this._onUnlock, { passive: true });
+      window.addEventListener('touchend', this._onUnlock, { passive: true }); // iOS
       window.__MATH_ATTACK_SOUND_MANAGER__ = this;
     }
   }
@@ -135,6 +136,7 @@ class SoundManager {
     if (typeof window !== 'undefined' && this._onUnlock) {
       window.removeEventListener('pointerdown', this._onUnlock);
       window.removeEventListener('keydown', this._onUnlock);
+      window.removeEventListener('touchend', this._onUnlock);
     }
     if (this.ctx) {
       try {

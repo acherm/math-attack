@@ -11,8 +11,11 @@ import {
   getSavedGameMode,
   setSavedGameMode,
   t,
+  keyLabel,
   getLocalizedLevelText
 } from '../i18n/i18n.js';
+import { getControlStyle, isTouchMode, setControlStyle } from '../mobile/touch-controls.js';
+import { centerSceneCamera } from '../mobile/viewport.js';
 import {
   SKINS,
   getUnlockedSkins,
@@ -33,10 +36,11 @@ export class MenuScene extends Phaser.Scene {
   create() {
     this.selectedMode = getSavedGameMode();
     soundFX.startMusic('menu');
-    // Sky gradient background
+    centerSceneCamera(this);
+    // Sky gradient background (wider than 960 for wide screens, see centerSceneCamera)
     const bg = this.add.graphics();
     bg.fillGradientStyle(0x1e1b4b, 0x1e1b4b, 0x1e3a8a, 0x1e3a8a, 1);
-    bg.fillRect(0, 0, 960, 540);
+    bg.fillRect(-1200, 0, 3360, 540);
 
     // Decorative hills
     bg.fillStyle(0x22c55e, 0.25);
@@ -62,7 +66,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     this.menuSubtitleTxt = this.add.text(480, 96, t('menuSubtitle'), {
-      fontSize: '14px',
+      fontSize: isTouchMode() ? '16px' : '14px',
       fontStyle: 'bold',
       color: '#bae6fd'
     }).setOrigin(0.5);
@@ -78,7 +82,7 @@ export class MenuScene extends Phaser.Scene {
 
     // 1. Mode Selection Section
     this.add.text(480, 144, t('chooseMode'), {
-      fontSize: '14.5px',
+      fontSize: isTouchMode() ? '16px' : '14.5px',
       fontStyle: 'bold',
       color: '#93c5fd'
     }).setOrigin(0.5);
@@ -116,7 +120,7 @@ export class MenuScene extends Phaser.Scene {
 
     // 2. Stage Selection Section
     this.add.text(480, 248, t('chooseStage'), {
-      fontSize: '14.5px',
+      fontSize: isTouchMode() ? '16px' : '14.5px',
       fontStyle: 'bold',
       color: '#93c5fd'
     }).setOrigin(0.5);
@@ -175,6 +179,11 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
     if (this.footerTxt.width > 596) {
       this.footerTxt.setScale(596 / this.footerTxt.width);
+    }
+    if (isTouchMode()) {
+      // Touch screens: the footer lets players choose how to control the heroes.
+      this.footerTxt.setVisible(false);
+      this._createControlStyleToggle();
     }
 
     const cookieBg = this.add.graphics();
@@ -250,6 +259,40 @@ export class MenuScene extends Phaser.Scene {
     });
   }
 
+  // Touch screens: choose between touching the screen and the on-screen gamepad.
+  _createControlStyleToggle() {
+    this.add.text(262, 501, t('controlsLabel'), {
+      fontSize: '15px',
+      fontStyle: 'bold',
+      color: '#93c5fd'
+    }).setOrigin(0.5);
+    [
+      { id: 'screen', x: 455, label: t('controlsScreen') },
+      { id: 'buttons', x: 660, label: t('controlsButtons') }
+    ].forEach(({ id, x, label }) => {
+      const active = getControlStyle() === id;
+      const bg = this.add.graphics();
+      bg.fillStyle(active ? 0x2563eb : 0x1e293b, 1);
+      bg.lineStyle(active ? 3 : 1.5, active ? 0xfacc15 : 0x475569, 1);
+      bg.fillRoundedRect(x - 98, 482, 196, 38, 10);
+      bg.strokeRoundedRect(x - 98, 482, 196, 38, 10);
+      const txt = this.add.text(x, 501, label, {
+        fontSize: '16px',
+        fontStyle: 'bold',
+        color: active ? '#fde047' : '#e2e8f0'
+      }).setOrigin(0.5);
+      if (txt.width > 184) txt.setScale(184 / txt.width);
+      const zone = this.add.zone(x, 501, 196, 44).setInteractive({ useHandCursor: true });
+      zone.on('pointerdown', () => {
+        if (getControlStyle() !== id) {
+          soundFX.playOperatorSwitch();
+          setControlStyle(id);
+          this.scene.restart();
+        }
+      });
+    });
+  }
+
   _createCharacterSkinPicker(x, y, prefix, roleLabel) {
     const lang = getLang();
     const skinInfo = getSelectedSkinInfo(prefix);
@@ -298,7 +341,7 @@ export class MenuScene extends Phaser.Scene {
       y + 71,
       t('viewSkinsBtn'),
       {
-        fontSize: '10px',
+        fontSize: isTouchMode() ? '12px' : '10px',
         fontStyle: 'bold',
         color: '#fde047',
         backgroundColor: '#1e293b',
@@ -338,8 +381,8 @@ export class MenuScene extends Phaser.Scene {
     // Fullscreen dark backdrop
     const backdrop = this.add.graphics();
     backdrop.fillStyle(0x0f172a, 0.97);
-    backdrop.fillRect(0, 0, 960, 540);
-    const blockZone = this.add.zone(480, 270, 960, 540).setInteractive();
+    backdrop.fillRect(-1200, -1200, 3360, 2940); // whole screen, even wide or tall ones
+    const blockZone = this.add.zone(480, 270, 3360, 2940).setInteractive();
     container.add([backdrop, blockZone]);
 
     // Header
@@ -349,6 +392,9 @@ export class MenuScene extends Phaser.Scene {
       fontStyle: 'bold',
       color: '#fde047'
     }).setOrigin(0.5);
+    if (titleTxt.width > 790) {
+      titleTxt.setScale(790 / titleTxt.width);
+    }
     container.add(titleTxt);
 
     // Close button
@@ -449,7 +495,8 @@ export class MenuScene extends Phaser.Scene {
       color: frActive ? '#fde047' : '#cbd5e1'
     }).setOrigin(0.5);
 
-    const frZone = this.add.zone(-186, 0, 98, 26).setInteractive({ useHandCursor: true });
+    const zoneH = isTouchMode() ? 38 : 26; // bigger hit areas for fingers
+    const frZone = this.add.zone(-186, 0, 98, zoneH).setInteractive({ useHandCursor: true });
     frZone.on('pointerdown', () => {
       if (getLang() !== 'fr') {
         soundFX.playOperatorSwitch();
@@ -470,7 +517,7 @@ export class MenuScene extends Phaser.Scene {
       color: enActive ? '#fde047' : '#cbd5e1'
     }).setOrigin(0.5);
 
-    const enZone = this.add.zone(-81, 0, 98, 26).setInteractive({ useHandCursor: true });
+    const enZone = this.add.zone(-81, 0, 98, zoneH).setInteractive({ useHandCursor: true });
     enZone.on('pointerdown', () => {
       if (getLang() !== 'en') {
         soundFX.playOperatorSwitch();
@@ -497,7 +544,7 @@ export class MenuScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
-    const swapZone = this.add.zone(65, 0, 178, 26).setInteractive({ useHandCursor: true });
+    const swapZone = this.add.zone(65, 0, 178, zoneH).setInteractive({ useHandCursor: true });
     swapZone.on('pointerdown', () => {
       soundFX.playOperatorSwitch();
       togglePlayersSwapped();
@@ -511,16 +558,16 @@ export class MenuScene extends Phaser.Scene {
     musicBg.fillRoundedRect(162, -13, 76, 26, 8);
     musicBg.strokeRoundedRect(162, -13, 76, 26, 8);
 
-    this.musicTxt = this.add.text(200, 0, soundFX.muted ? '🔇 [M]' : '🎵 [M]', {
+    this.musicTxt = this.add.text(200, 0, keyLabel(soundFX.muted ? '🔇 [M]' : '🎵 [M]'), {
       fontSize: '12px',
       fontStyle: 'bold',
       color: soundFX.muted ? '#fda4af' : '#4ade80'
     }).setOrigin(0.5);
 
-    const musicZone = this.add.zone(200, 0, 76, 26).setInteractive({ useHandCursor: true });
+    const musicZone = this.add.zone(200, 0, 76, zoneH).setInteractive({ useHandCursor: true });
     musicZone.on('pointerdown', () => {
       const muted = soundFX.toggleMute();
-      this.musicTxt.setText(muted ? '🔇 [M]' : '🎵 [M]');
+      this.musicTxt.setText(keyLabel(muted ? '🔇 [M]' : '🎵 [M]'));
       this.musicTxt.setColor(muted ? '#fda4af' : '#4ade80');
     });
 
@@ -544,7 +591,7 @@ export class MenuScene extends Phaser.Scene {
     const container = this.add.container(x, y);
     const bg = this.add.graphics();
     const titleTxt = this.add.text(0, -8, title, {
-      fontSize: '14.5px',
+      fontSize: isTouchMode() ? '16px' : '14.5px',
       fontStyle: 'bold',
       color: '#ffffff'
     }).setOrigin(0.5);
@@ -553,7 +600,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     const subTxt = this.add.text(0, 12, subtitle, {
-      fontSize: '11.5px',
+      fontSize: isTouchMode() ? '13.5px' : '11.5px',
       color: '#cbd5e1'
     }).setOrigin(0.5);
     if (subTxt.width > w - 16) {

@@ -19,6 +19,12 @@ A fast-paced, cute 1-to-2 player Mario-style arcade math platformer for kids, bu
 - **Player 2 (Default: Alice)**: Works simultaneously on **AZERTY (`Q`, `D`, `Z`)** and **QWERTY/QWERTZ (`A`, `D`, `W`)** (**2× Jump for Double Jump!**).
 - **Shortcuts**: `S` to swap Ben & Alice between P1/P2, `K` to open the 20 Skins Gallery, `L` to switch language (`FR`/`EN`), `U` to undo, `R` to restart stage, `M` to mute/unmute music, `ESC` for Main Menu.
 
+### Phones & Tablets
+- The game fills the whole screen; on a phone the camera follows the heroes, and the **🔍** button zooms in.
+- **Touch the screen** (default): tap where the hero should go, **swipe up** to jump (keep sliding for a double jump), tap a higher platform to climb onto it. In 2-player modes, each finger moves the hero closest to it.
+- Or choose the **on-screen gamepad** in the menu (◀ ▶ pad + jump button; one per player on a tablet).
+- Can be added to the home screen to play fullscreen in landscape.
+
 ## Quick Start
 
 ```bash
