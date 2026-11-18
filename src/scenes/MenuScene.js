@@ -296,7 +296,7 @@ export class MenuScene extends Phaser.Scene {
     const countTxt = this.add.text(
       x,
       y + 71,
-      getLang() === 'fr' ? '👕 Voir les 20 Skins [K]' : '👕 View 20 Skins [K]',
+      t('viewSkinsBtn'),
       {
         fontSize: '10px',
         fontStyle: 'bold',
@@ -343,10 +343,7 @@ export class MenuScene extends Phaser.Scene {
     container.add([backdrop, blockZone]);
 
     // Header
-    const headerTitle =
-      lang === 'fr'
-        ? '👕 GALERIE DES 20 SKINS (BEN & ALICE) — Clique sur un skin pour le choisir !'
-        : '👕 ALL 20 SKINS GALLERY (BEN & ALICE) — Click any skin to equip!';
+    const headerTitle = t('skinsGalleryTitle');
     const titleTxt = this.add.text(440, 24, headerTitle, {
       fontSize: '17px',
       fontStyle: 'bold',
@@ -360,7 +357,7 @@ export class MenuScene extends Phaser.Scene {
     closeBg.lineStyle(2, 0xffffff, 0.9);
     closeBg.fillRoundedRect(830, 8, 114, 32, 8);
     closeBg.strokeRoundedRect(830, 8, 114, 32, 8);
-    const closeTxt = this.add.text(887, 24, lang === 'fr' ? '✕ FERMER' : '✕ CLOSE', {
+    const closeTxt = this.add.text(887, 24, t('closeBtn'), {
       fontSize: '13px',
       fontStyle: 'bold',
       color: '#ffffff'

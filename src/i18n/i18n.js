@@ -202,7 +202,14 @@ export const TRANSLATIONS = {
     victoryReachedFallback: 'Objectif {target} atteint !',
     nextStageBtn: '▶ SUIVANT [ESPACE]',
     replayBtn: '↻ REJOUER [R]',
-    menuBtn: '☰ MENU [ESC]'
+    menuBtn: '☰ MENU [ESC]',
+    nextDanceBtn: '💃 AUTRE DANSE [D]',
+    viewSkinsBtn: '👕 Voir les 20 Skins [K]',
+    skinsGalleryTitle: '👕 GALERIE DES 20 SKINS (BEN & ALICE) — Clique sur un skin pour le choisir !',
+    closeBtn: '✕ FERMER',
+    suggestedSolution: '💡 SOLUTION PROPOSÉE :',
+    slimeShortLabel: '-{n} Aïe !',
+    slimeBumpExpr: 'Aïe, un monstre ! {prev} - {n} = {val}'
   },
   en: {
     analyticsSettings: 'Cookies [C]',
@@ -264,7 +271,14 @@ export const TRANSLATIONS = {
     victoryReachedFallback: 'Reached {target}!',
     nextStageBtn: '▶ NEXT STAGE [SPACE]',
     replayBtn: '↻ REPLAY [R]',
-    menuBtn: '☰ MENU [ESC]'
+    menuBtn: '☰ MENU [ESC]',
+    nextDanceBtn: '💃 NEXT DANCE [D]',
+    viewSkinsBtn: '👕 View 20 Skins [K]',
+    skinsGalleryTitle: '👕 ALL 20 SKINS GALLERY (BEN & ALICE) — Click any skin to equip!',
+    closeBtn: '✕ CLOSE',
+    suggestedSolution: '💡 SUGGESTED SOLUTION:',
+    slimeShortLabel: '-{n} Slime!',
+    slimeBumpExpr: 'Slime bump! {prev} - {n} = {val}'
   }
 };
 

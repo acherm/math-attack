@@ -222,7 +222,7 @@ export class VictoryScene extends Phaser.Scene {
       this._goNextStage();
     });
 
-    const nextDanceLabel = getLang() === 'fr' ? '💃 AUTRE DANSE [D]' : '💃 NEXT DANCE [D]';
+    const nextDanceLabel = t('nextDanceBtn');
     this._createActionButton(480, 412, 185, 42, 0xd946ef, nextDanceLabel, () => {
       this._triggerAnotherRandomDance();
     });

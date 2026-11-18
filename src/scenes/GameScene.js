@@ -285,7 +285,7 @@ export class GameScene extends Phaser.Scene {
       color: '#fde047'
     }).setOrigin(0.5);
 
-    this.doorStatusText = this.add.text(0, 6, 'LOCKED', {
+    this.doorStatusText = this.add.text(0, 6, t('doorLocked'), {
       fontSize: '11px',
       fontStyle: 'bold',
       color: '#fda4af'
@@ -873,7 +873,7 @@ export class GameScene extends Phaser.Scene {
       }
 
       // Highlight the solution banner in a big, clear card at the top-center of the arena AND in the HUD!
-      const titleStr = getLang() === 'fr' ? '💡 SOLUTION PROPOSÉE :' : '💡 SUGGESTED SOLUTION:';
+      const titleStr = t('suggestedSolution');
       this._spawnHintBanner(titleStr, hint.formula);
       this.hudEquationText.setText(`💡 ${hint.formula}`);
       this._burstParticles(bData.baseX, bData.baseY - 16, 0xfde047, 14);

@@ -332,7 +332,7 @@ export class MathCounter {
         operator: this.activeOperator,
         changed: res.changed,
         value: this.currentValue,
-        shortLabel: `Mode: ${brickType}`,
+        shortLabel: t('modeSwitchLabel', { op: brickType }),
         unlockedDoor: this.isDoorUnlocked()
       };
     }
@@ -379,7 +379,7 @@ export class MathCounter {
           reason: 'too_high',
           previousValue: prev,
           value: prev,
-          shortLabel: 'Too High! (>999)',
+          shortLabel: t('tooHighMsg', { candidate }),
           unlockedDoor: this.isDoorUnlocked()
         };
       }
@@ -389,7 +389,7 @@ export class MathCounter {
         kind: 'modifier',
         previousValue: prev,
         value: this.currentValue,
-        shortLabel: '×10 Shift!',
+        shortLabel: t('shiftUpLabel'),
         unlockedDoor: this.isDoorUnlocked()
       };
     }
@@ -402,7 +402,7 @@ export class MathCounter {
         kind: 'modifier',
         previousValue: prev,
         value: this.currentValue,
-        shortLabel: '÷10 Shift!',
+        shortLabel: t('shiftDownLabel'),
         unlockedDoor: this.isDoorUnlocked()
       };
     }
@@ -417,7 +417,7 @@ export class MathCounter {
           reason: 'too_high',
           previousValue: prev,
           value: prev,
-          shortLabel: 'Max 999!',
+          shortLabel: t('max999Label'),
           unlockedDoor: this.isDoorUnlocked()
         };
       }
@@ -510,12 +510,12 @@ export class MathCounter {
     const prev = this.currentValue;
     const candidate = Math.max(MIN_NUMBER, prev - penalty);
     if (candidate !== prev) {
-      this._recordStep(prev, candidate, '-', penalty, `Slime bump! ${formatThreeDigits(prev).formatted} - ${penalty} = ${formatThreeDigits(candidate).formatted}`);
+      this._recordStep(prev, candidate, '-', penalty, t('slimeBumpExpr', { prev: formatThreeDigits(prev).formatted, n: penalty, val: formatThreeDigits(candidate).formatted }));
     }
     return {
       previousValue: prev,
       value: this.currentValue,
-      shortLabel: `-${penalty} Slime!`,
+      shortLabel: t('slimeShortLabel', { n: penalty }),
       unlockedDoor: this.isDoorUnlocked()
     };
   }
